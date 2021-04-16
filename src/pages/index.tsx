@@ -1,5 +1,7 @@
 import { Flex, Button, Stack} from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from '../components/Form/Input';
 
 interface SignInFormData {
@@ -7,8 +9,18 @@ interface SignInFormData {
   password: string;
 }
 
+const signInFormSchema = yup.object().shape({
+  email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
+  password: yup.string().required('Senha obrigatória'),
+});
+
 export default function SignIn() {
-  const { register, handleSubmit, formState } = useForm();
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(signInFormSchema),
+  });
+  const { errors } = formState;
+
+  console.log(errors);
 
   //Passamos o tipo SubmitHandler dessa forma apenas pq dentro do submit também vem o evento, e se não tiparmos dessa forma, não conseguimos acessar o tipo do event.
   const handleSignIn: SubmitHandler<SignInFormData> = (data) => {
@@ -35,8 +47,20 @@ export default function SignIn() {
         {/* O Stack faz uma pilha, e atribui os estilos para todos que estiverem envoltos nele, nesse caso estamos apenas colocando um espaço entre os elementos, como se fosse o wrap do flex */}
         <Stack spacing="4">
 
-          <Input name="email" label="E-mail" type="email" {...register('email')} />
-          <Input name="password" label="Senha" type="password" {...register('password')} />
+          <Input
+            name="email"
+            label="E-mail"
+            type="email"
+            error={errors.email}
+            {...register('email')} 
+          />
+          <Input
+            name="password"
+            label="Senha"
+            type="password"
+            error={errors.password}
+            {...register('password')} 
+          />
       
         </Stack>
 
