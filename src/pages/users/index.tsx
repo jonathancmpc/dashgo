@@ -6,12 +6,12 @@ import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
+import { api } from "../../services/api";
 
 export default function UserList() {
   // Montando a query para salvar nossos dados em fetch, o users passado é o nome do cach onde irá ficar armazenado os dados
   const { data, isLoading, error, isFetching } = useQuery('users', async () => {
-    const response = await fetch('http://localhost:3000/api/users');
-    const data = await response.json();
+    const { data } = await api.get('users');
 
     const users = data.users.map(user => {
       return {
