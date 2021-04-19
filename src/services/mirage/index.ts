@@ -24,7 +24,7 @@ export function makeServer() {
         email() {
           return faker.internet.email().toLowerCase();
         },
-        createdAt() {
+        created_at() {
           return faker.date.recent(10);
         }
       })
@@ -32,7 +32,7 @@ export function makeServer() {
 
     //Todas as informações passadas para o seed são mostradas assim que a aplicação é inicializada
     seeds(server) {
-      server.createList('user', 200) //Cria 200 usuários conforme as configurações da factory
+      server.createList('user', 10) //Cria 10 usuários conforme as configurações da factory
     },
 
     routes() {
