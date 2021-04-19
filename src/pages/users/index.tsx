@@ -27,6 +27,8 @@ export default function UserList() {
     })
 
     return users;
+  }, {
+    staleTime: 1000 * 5 // O dado deve atualizar a cada 5 segundos assim que o foco estiver na tela. Ou seja, em 5 segundos ele fica obssoleto
   })
 
   const isWideVersion = useBreakpointValue({
