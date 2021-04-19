@@ -1,4 +1,5 @@
-import { createServer, Model } from 'miragejs';
+import { createServer, Factory, Model } from 'miragejs';
+import faker from 'faker';
 
 interface User {
   name: string;
@@ -7,11 +8,31 @@ interface User {
 }
 
 //O Partial é do typescript e quer dizer que os campos da interface podem ser esses ou podem vir outros campos sem ser esses. O Diego pegou na documentação do mirage
+//O faker é uma lib para gerar informações fakes para alimentar nossa api fake
 
 export function makeServer() {
   const server = createServer({
     models: {
       user: Model.extend<Partial<User>>({})
+    },
+
+    factories: {
+      user: Factory.extend({
+        name(i: number) {
+          return `User ${i + 1}`
+        },
+        email() {
+          return faker.internet.email().toLowerCase();
+        },
+        createdAt() {
+          return faker.date.recent(10);
+        }
+      })
+    },
+
+    //Todas as informações passadas para o seed são mostradas assim que a aplicação é inicializada
+    seeds(server) {
+      server.createList('user', 200) //Cria 200 usuários conforme as configurações da factory
     },
 
     routes() {
