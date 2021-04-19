@@ -1,22 +1,25 @@
-import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Flex, Heading, Icon, Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useQuery } from 'react-query';
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
+
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 
 export default function UserList() {
+  // Montando a query para salvar nossos dados em fetch, o users passado é o nome do cach onde irá ficar armazenado os dados
+  const { data, isLoading, error } = useQuery('users', async () => {
+    const response = await fetch('http://localhost:3000/api/users');
+    const data = await response.json();
+
+    return data;
+  })
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true
   });
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/users')
-      .then(response => response.json())
-      .then(data => console.log(data.users));
-  }, []);
 
   return (
     <Box>
@@ -42,102 +45,64 @@ export default function UserList() {
             </Link>
           </Flex>
 
-          <Table colorScheme="whiteAlpha">
+          { isLoading ? 
+            (
+              <Flex justify="center">
+                <Spinner />
+              </Flex>
+            ) : error ? (
+              <Flex justify="center" >
+                <Text>Falha ao obter dados dos usuários</Text>
+              </Flex>
+            ) :
+            (
+              <>
+                <Table colorScheme="whiteAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th px={["2", "4", "6"]} color="gray.300" width="8">
+                        <Checkbox colorScheme="pink" />
+                      </Th>
+                      <Th>Usuário</Th>
+                      { isWideVersion && <Th>Data de cadastro</Th> }
+                      { isWideVersion && <Th w="8"></Th> }
+                    </Tr>
+                  </Thead>
 
-            <Thead>
-              <Tr>
-                <Th px={["2", "4", "6"]} color="gray.300" width="8">
-                  <Checkbox colorScheme="pink" />
-                </Th>
-                <Th>Usuário</Th>
-                { isWideVersion && <Th>Data de cadastro</Th> }
-                { isWideVersion && <Th w="8"></Th> }
-              </Tr>
-            </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td px={["2", "4", "6"]}>
+                        <Checkbox colorScheme="pink" />
+                      </Td>
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">Jonathan Cavalcante</Text>
+                          <Text fontSize="sm" color="gray.300">jonathancmpc@gmail.com</Text>
+                        </Box>
+                      </Td>
+                      { isWideVersion && <Td>14 de abril, 2021</Td> }
+                      <Td>
+                        { isWideVersion && (
+                          <Button
+                            as="a"
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="purple"
+                            leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                          >
+                            Editar
+                          </Button>
+                        )}
+                      </Td>
+                    </Tr>              
+                  </Tbody>
 
-            <Tbody>
-              <Tr>
-                <Td px={["2", "4", "6"]}>
-                  <Checkbox colorScheme="pink" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Jonathan Cavalcante</Text>
-                    <Text fontSize="sm" color="gray.300">jonathancmpc@gmail.com</Text>
-                  </Box>
-                </Td>
-                { isWideVersion && <Td>14 de abril, 2021</Td> }
-                <Td>
-                  { isWideVersion && (
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="purple"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      Editar
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
-              
-              <Tr>
-                <Td px={["2", "4", "6"]}>
-                  <Checkbox colorScheme="pink" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Jonathan Cavalcante</Text>
-                    <Text fontSize="sm" color="gray.300">jonathancmpc@gmail.com</Text>
-                  </Box>
-                </Td>
-                { isWideVersion && <Td>14 de abril, 2021</Td> }
-                <Td>
-                  { isWideVersion && (
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="purple"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      Editar
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
+                </Table>
 
-              <Tr>
-                <Td px={["2", "4", "6"]}>
-                  <Checkbox colorScheme="pink" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Jonathan Cavalcante</Text>
-                    <Text fontSize="sm" color="gray.300">jonathancmpc@gmail.com</Text>
-                  </Box>
-                </Td>
-                { isWideVersion && <Td>14 de abril, 2021</Td> }
-                <Td>
-                  { isWideVersion && (
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="purple"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      Editar
-                    </Button>
-                  )}
-                </Td>
-              </Tr>
-            </Tbody>
-
-          </Table>
-
-          <Pagination />
+                <Pagination />
+              </>
+            )          
+          }
         </Box>
       </Flex>
     </Box>
