@@ -1,35 +1,14 @@
 import { Box, Button, Checkbox, Flex, Heading, Icon, Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
-import { useQuery } from 'react-query';
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
+import { useUsers } from "../../services/hooks/useUsers";
 
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { api } from "../../services/api";
 
 export default function UserList() {
-  // Montando a query para salvar nossos dados em fetch, o users passado é o nome do cach onde irá ficar armazenado os dados
-  const { data, isLoading, error, isFetching } = useQuery('users', async () => {
-    const { data } = await api.get('users');
-
-    const users = data.users.map(user => {
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        created_at: new Date(user.created_at).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-        }),
-      }
-    })
-
-    return users;
-  }, {
-    staleTime: 1000 * 5 // O dado deve atualizar a cada 5 segundos assim que o foco estiver na tela. Ou seja, em 5 segundos ele fica obssoleto
-  })
+  const { data, isLoading, error, isFetching } = useUsers();
 
   const isWideVersion = useBreakpointValue({
     base: false,
