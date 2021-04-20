@@ -8,8 +8,19 @@ interface User {
   created_at: string;
 }
 
-export async function getUsers(): Promise<User[]> {
-  const { data } = await api.get('users');
+interface GetUsersResponse {
+  totalCount: number;
+  users: User[];
+}
+
+export async function getUsers(page: number): Promise<GetUsersResponse> {
+  const { data, headers } = await api.get('users', {
+    params: {
+      page,
+    }
+  });
+
+  const totalCount = Number(headers['x-total-count'])
 
   const users = data.users.map((user: User)=> {
     return {
@@ -24,12 +35,15 @@ export async function getUsers(): Promise<User[]> {
     }
   })
 
-  return users;
+  return {
+    users,
+    totalCount
+  }
 }
 
-export function useUsers() {
+export function useUsers(page: number) {
     // Montando a query para salvar nossos dados em fetch, o users passado é o nome do cach onde irá ficar armazenado os dados
-  return useQuery('users', getUsers, {
+  return useQuery(['users', page], () => getUsers(page), {
     staleTime: 1000 * 5 // O dado deve atualizar a cada 5 segundos assim que o foco estiver na tela. Ou seja, em 5 segundos ele fica obssoleto
   })
 }
