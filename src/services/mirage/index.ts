@@ -1,4 +1,4 @@
-import { createServer, Factory, Model } from 'miragejs';
+import { createServer, Factory, Model, Response } from 'miragejs';
 import faker from 'faker';
 
 interface User {
@@ -32,14 +32,32 @@ export function makeServer() {
 
     //Todas as informações passadas para o seed são mostradas assim que a aplicação é inicializada
     seeds(server) {
-      server.createList('user', 10) //Cria 10 usuários conforme as configurações da factory
+      server.createList('user', 200) //Cria 200 usuários conforme as configurações da factory
     },
 
     routes() {
       this.namespace = 'api';
       this.timing = 750; // Faz com que toda vez que chamemos a api demore 750 milisegundos, apenas para simular uma chamada de api verdadeira
 
-      this.get('/users');
+      // Passamos como segundo parâmetro a configuração da paginação
+      this.get('/users', function(schema, request) {
+        const { page = 1, per_page = 10} = request.queryParams
+
+        const total = schema.all('user').length
+
+        const pageStart = (Number(page) - 1) * Number(per_page);
+        const pageEnd = pageStart + Number(per_page);
+
+        const users = this.serialize(schema.all('user'))
+          .users.slice(pageStart, pageEnd)
+
+        return new Response(
+          200,
+          { 'x-total-count': String(total) },
+          { users }
+        )
+      });
+
       this.post('/users');
 
       this.namespace = ''; // Passado para resetar o namespace e não prejudicar o caminho default do Next, que é a pasta api que passamos no src
