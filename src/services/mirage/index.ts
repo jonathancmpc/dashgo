@@ -1,6 +1,6 @@
-import { createServer, Factory, Model, Response } from 'miragejs';
+import { createServer, Factory, Model, Response, ActiveModelSerializer } from 'miragejs';
 import faker from 'faker';
-import { ActiveModelSerializer } from 'miragejs/serializer';
+
 
 interface User {
   name: string;
