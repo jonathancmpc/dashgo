@@ -44,6 +44,6 @@ export async function getUsers(page: number): Promise<GetUsersResponse> {
 export function useUsers(page: number) {
     // Montando a query para salvar nossos dados em fetch, o users passado é o nome do cach onde irá ficar armazenado os dados
   return useQuery(['users', page], () => getUsers(page), {
-    staleTime: 1000 * 5 // O dado deve atualizar a cada 5 segundos assim que o foco estiver na tela. Ou seja, em 5 segundos ele fica obssoleto
+    staleTime: 1000 * 60 * 10 // O dado deve atualizar a cada 10 minutos assim que o foco estiver na tela. Ou seja, em 5 segundos ele fica obssoleto
   })
 }

@@ -58,6 +58,7 @@ export function makeServer() {
         )
       });
 
+      this.get('/users/:id');
       this.post('/users');
 
       this.namespace = ''; // Passado para resetar o namespace e não prejudicar o caminho default do Next, que é a pasta api que passamos no src
